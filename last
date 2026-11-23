@@ -1,0 +1,5 @@
+nilai/periksa  = function before: raporCekNilai
+nilai/nilaiguru  = function before: raporNilaiGuru
+cetak/pts  = function before: cetakPts
+cetak/akhir  = function before: cetakAkhir
+leger/data  = function before: cetakLeger

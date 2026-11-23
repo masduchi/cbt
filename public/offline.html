@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noindex, nofollow">
+        <title>Koneksi terputus · CBT Sekolah</title>
+        <style>
+            :root {
+                color-scheme: light dark;
+                --bg: #f4f5f7;
+                --card: #ffffff;
+                --text: #1f2430;
+                --muted: #5b6270;
+                --border: #dfe2e8;
+                --primary: #4f5edd;
+                --warning: #b45309;
+                --warning-bg: #fff7ed;
+            }
+
+            @media (prefers-color-scheme: dark) {
+                :root {
+                    --bg: #11131a;
+                    --card: #1a1d26;
+                    --text: #eef0f6;
+                    --muted: #a6adbd;
+                    --border: #2c3140;
+                    --primary: #8b96f0;
+                    --warning: #fbbf24;
+                    --warning-bg: #2a2113;
+                }
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                min-height: 100vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 24px;
+                background: var(--bg);
+                color: var(--text);
+                font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+                line-height: 1.55;
+            }
+
+            main {
+                width: 100%;
+                max-width: 32rem;
+                background: var(--card);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                padding: 28px;
+                box-shadow: 0 12px 32px rgba(15, 18, 30, 0.08);
+            }
+
+            .icon {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 48px;
+                height: 48px;
+                border-radius: 12px;
+                background: var(--warning-bg);
+                color: var(--warning);
+                font-size: 22px;
+            }
+
+            h1 {
+                margin: 16px 0 8px;
+                font-size: 1.35rem;
+            }
+
+            p {
+                margin: 0 0 12px;
+                color: var(--muted);
+                font-size: 0.925rem;
+            }
+
+            strong {
+                color: var(--text);
+            }
+
+            .pending {
+                margin: 16px 0;
+                padding: 12px 14px;
+                border: 1px solid var(--border);
+                border-left: 3px solid var(--warning);
+                border-radius: 10px;
+                background: var(--warning-bg);
+                color: var(--text);
+                font-size: 0.9rem;
+            }
+
+            .pending[hidden] {
+                display: none;
+            }
+
+            .actions {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                margin-top: 20px;
+            }
+
+            button {
+                flex: 1 1 auto;
+                min-height: 42px;
+                padding: 0 18px;
+                border: 1px solid transparent;
+                border-radius: 10px;
+                background: var(--primary);
+                color: #ffffff;
+                font: inherit;
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+            button:disabled {
+                cursor: progress;
+                opacity: 0.7;
+            }
+
+            .hint {
+                margin-top: 16px;
+                font-size: 0.8rem;
+            }
+        </style>
+    </head>
+    <body>
+        <main>
+            <div class="icon" aria-hidden="true">⚡</div>
+            <h1>Koneksi terputus</h1>
+            <p>
+                Halaman tidak dapat dimuat karena perangkat ini sedang offline. Halaman ujian sengaja
+                <strong>tidak dibuka dari simpanan</strong> agar soal, sisa waktu, dan status ujian tidak pernah basi.
+            </p>
+            <p>
+                Halaman akan terbuka kembali otomatis begitu koneksi tersambung. Jangan tutup browser.
+            </p>
+
+            <div class="pending" id="pending" role="status" hidden></div>
+
+            <div class="actions">
+                <button type="button" id="retry">Coba lagi</button>
+            </div>
+
+            <p class="hint">
+                Jawaban yang sudah terkirim tersimpan di server. Jawaban yang belum terkirim tetap tersimpan di
+                perangkat ini dan akan dikirim otomatis saat ujian dibuka kembali.
+            </p>
+        </main>
+
+        <script>
+            (function () {
+                var pending = document.getElementById('pending');
+                var retry = document.getElementById('retry');
+                var count = 0;
+
+                try {
+                    for (var i = 0; i < localStorage.length; i += 1) {
+                        var key = localStorage.key(i);
+
+                        if (!key || key.indexOf('draft-') !== 0) {
+                            continue;
+                        }
+
+                        var value = JSON.parse(localStorage.getItem(key) || '{}');
+
+                        if (value && typeof value === 'object') {
+                            count += Object.keys(value).length;
+                        }
+                    }
+                } catch (error) {
+                    count = 0;
+                }
+
+                if (count > 0) {
+                    pending.hidden = false;
+                    pending.textContent =
+                        count + ' jawaban tersimpan di perangkat ini dan akan dikirim otomatis setelah ujian terbuka kembali.';
+                }
+
+                function reload() {
+                    retry.disabled = true;
+                    retry.textContent = 'Mencoba…';
+                    window.location.reload();
+                }
+
+                retry.addEventListener('click', reload);
+                window.addEventListener('online', reload);
+            })();
+        </script>
+    </body>
+</html>
