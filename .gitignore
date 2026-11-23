@@ -32,3 +32,8 @@ Thumbs.db
 /.claude/
 /.freebuff/
 /.github/
+
+/last
+/tmp-rapor-*.png
+/.tmp-page-header.mjs
+/screenshots/
